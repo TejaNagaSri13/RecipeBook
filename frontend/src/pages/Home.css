@@ -1,0 +1,141 @@
+/* General Page Styling */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Header Image Styling */
+  .title-img img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 4px solid #f39c12;
+  }
+  
+  /* About Section */
+  .home-about {
+    max-width: 800px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .home-about h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .home-about p {
+    text-align: left;
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.8;
+  }
+  
+  /* List Icons */
+  .home-about p span {
+    color: #27ae60;
+    font-size: 1.2rem;
+    margin-right: 10px;
+  }
+  
+  /* Categories Section */
+  .home-nav-cat {
+    text-align: center;
+    margin-top: 40px;
+  }
+  
+  .home-nav-cat h2 {
+    font-size: 2rem;
+    color: #e67e22;
+    margin-bottom: 20px;
+  }
+  
+  /* Category Cards */
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .border {
+    width: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    background: #ecf0f1;
+    transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .border:hover {
+    background: #d5dbdb;
+    transform: scale(1.05);
+  }
+  
+  .border p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  /* Contact Section */
+  .contact-det {
+    text-align: center;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    margin-top: 40px;
+  }
+  
+  .contact-det h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  
+  .contact-det a {
+    display: block;
+    font-size: 1rem;
+    color: white;
+    text-decoration: none;
+    margin: 5px 0;
+  }
+  
+  .contact-det a:hover {
+    color: #f1c40f;
+    text-decoration: underline;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .home-about {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    .title-img img {
+      height: 250px;
+    }
+  
+    .home-about h2,
+    .home-nav-cat h2 {
+      font-size: 1.8rem;
+    }
+  
+    .border {
+      width: 150px;
+      padding: 15px;
+    }
+  
+    .contact-det {
+      padding: 15px;
+    }
+  }
+  
