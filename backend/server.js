@@ -24,9 +24,10 @@ app.get('/', (req, res) => {
     res.send("<h1 align=center>Welcome to the Recipe Book API</h1>");
 });
 
-// 📌 **User Registration API**
+//register page
 app.post('/register', async (req, res) => {
     console.log("Received Registration Data: ", req.body);
+
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
@@ -37,32 +38,49 @@ app.post('/register', async (req, res) => {
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ message: "User already exists" });
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // 🔥 Fix: Ensure password is properly hashed
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const user = new User({ username, email, password: hashedPassword });
         await user.save();
-        
+
+        console.log("User registered:", user);
+
         res.status(201).json({ message: "User Registered Successfully" });
     } catch (err) {
-        console.log(err);
+        console.log("Registration Error:", err);
         res.status(500).json({ message: "Error registering user" });
     }
 });
 
-// 📌 **User Login API**
+//login page
 app.post('/login', async (req, res) => {
-    console.log("Received Login Data: ", req.body);
-    const { email, password } = req.body;
+    console.log("Received Login Data: ", req.body);  // Debugging
 
+    const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+
+        console.log("Found User in DB: ", user);  // Debugging
+
+        if (!user) {
+            return res.status(400).json({ message: "User Not Found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        console.log("Password Match:", isMatch);  // Debugging
+
+        if (!isMatch) {
             return res.status(400).json({ message: "Invalid Credentials" });
         }
 
         const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: "1h" });
+
         res.json({ message: "Login Successful", token, username: user.username });
     } catch (err) {
-        console.log(err);
+        console.log("Login Error:", err);
         res.status(500).json({ message: "Error logging in" });
     }
 });
