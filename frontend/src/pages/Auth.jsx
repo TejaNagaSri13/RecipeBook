@@ -28,14 +28,17 @@ const Login = ({ setIsLoggedIn }) => {
         password,
       });
 
+      console.log("Response from API:", response.data);  // Debug API response
+
       setCookies("token", response.data.token, { path: "/" });
       localStorage.setItem("username", response.data.username);
       setIsLoggedIn(true);
       navigate("/");
     } catch (error) {
-      alert("Invalid credentials. Please try again.");
+      console.log("Login Error:", error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.message : "Invalid credentials. Please try again.");
     }
-  };
+};
 
   return (
     <div className="auth-container">
