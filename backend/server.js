@@ -2,30 +2,46 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const User = require('./models/User');
-const Recipe = require('./models/Recipe');  // Import Recipe model
+const Recipe = require('./models/Recipe');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const SECRET_KEY = "supersecretkey"; // Change this in production
 
 app.use(express.json());
 app.use(cors());
 
-// Home page API
+// ✅ Check MongoDB Connection
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("✅ DB connected successfully.."))
+    .catch((err) => console.log("❌ DB connection error: ", err));
+
+// ✅ Home Page
 app.get('/', (req, res) => {
-    res.send("<h1 align=center>Welcome to the MERN stack week 2 session</h1>");
+    res.send("<h1 align=center>Welcome to the Recipe Book API</h1>");
 });
 
 // 📌 **User Registration API**
 app.post('/register', async (req, res) => {
+    console.log("Received Registration Data: ", req.body);
     const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+        return res.status(400).json({ message: "All fields are required" });
+    }
+
     try {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: "User already exists" });
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ username, email, password: hashedPassword });
         await user.save();
-        res.json({ message: "User Registered.." });
-        console.log("User Registration completed...");
+        
+        res.status(201).json({ message: "User Registered Successfully" });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error registering user" });
@@ -34,24 +50,41 @@ app.post('/register', async (req, res) => {
 
 // 📌 **User Login API**
 app.post('/login', async (req, res) => {
+    console.log("Received Login Data: ", req.body);
     const { email, password } = req.body;
+
     try {
         const user = await User.findOne({ email });
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(400).json({ message: "Invalid Credentials" });
         }
-        res.json({ message: "Login Successful", username: user.username });
+
+        const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: "1h" });
+        res.json({ message: "Login Successful", token, username: user.username });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Error logging in" });
     }
 });
 
-// 📌 **Add Recipe API**
-app.post('/recipes', async (req, res) => {
-    const { name, description, imageUrl, ingredients, instructions } = req.body;
+// 📌 **Middleware: Verify JWT Token**
+const verifyToken = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Access Denied" });
+
     try {
-        const recipe = new Recipe({ name, description, imageUrl, ingredients, instructions });
+        const verified = jwt.verify(token, SECRET_KEY);
+        req.user = verified;
+        next();
+    } catch (err) {
+        res.status(400).json({ message: "Invalid Token" });
+    }
+};
+
+// 📌 **Add Recipe API (Protected)**
+app.post('/recipes', verifyToken, async (req, res) => {
+    try {
+        const recipe = new Recipe(req.body);
         await recipe.save();
         res.json({ message: "Recipe Added Successfully!" });
     } catch (err) {
@@ -71,61 +104,5 @@ app.get('/recipes', async (req, res) => {
     }
 });
 
-// 📌 **Get Single Recipe by ID**
-app.get('/recipes/:id', async (req, res) => {
-    try {
-        const recipe = await Recipe.findById(req.params.id);
-        if (!recipe) {
-            return res.status(404).json({ message: "Recipe not found" });
-        }
-        res.json(recipe);
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Error fetching recipe" });
-    }
-});
-
-// 📌 **Update Recipe API**
-app.put('/recipes/:id', async (req, res) => {
-    const { name, description, imageUrl, ingredients, instructions } = req.body;
-    try {
-        const updatedRecipe = await Recipe.findByIdAndUpdate(req.params.id, 
-            { name, description, imageUrl, ingredients, instructions }, 
-            { new: true }
-        );
-        if (!updatedRecipe) {
-            return res.status(404).json({ message: "Recipe not found" });
-        }
-        res.json({ message: "Recipe Updated Successfully", updatedRecipe });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Error updating recipe" });
-    }
-});
-
-// 📌 **Delete Recipe API**
-app.delete('/recipes/:id', async (req, res) => {
-    try {
-        const deletedRecipe = await Recipe.findByIdAndDelete(req.params.id);
-        if (!deletedRecipe) {
-            return res.status(404).json({ message: "Recipe not found" });
-        }
-        res.json({ message: "Recipe Deleted Successfully" });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Error deleting recipe" });
-    }
-});
-
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("DB connected successfully.."))
-    .catch((err) => console.log(err));
-
-// Start the server
-app.listen(PORT, (err) => {
-    if (err) {
-        console.log(err);
-    }
-    console.log("Server is running on port: " + PORT);
-});
+// 📌 **Start Server**
+app.listen(PORT, () => console.log(`🚀 Server is running on port: ${PORT}`));
