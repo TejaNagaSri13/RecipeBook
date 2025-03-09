@@ -14,8 +14,8 @@ export const Auth = ({ setIsLoggedIn }) => {
 };
 
 const Login = ({ setIsLoggedIn }) => {
-  const [_, setCookies] = useCookies(["access_token"]);
-  const [username, setUsername] = useState("");
+  const [_, setCookies] = useCookies(["token"]);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -23,17 +23,17 @@ const Login = ({ setIsLoggedIn }) => {
     event.preventDefault();
 
     try {
-      const result = await axios.post("https://recipebook-nlcw.onrender.com/auth/login", {
-        username,
+      const response = await axios.post("https://recipebook-nlcw.onrender.com/login", {
+        email,
         password,
       });
 
-      setCookies("access_token", result.data.token);
-      localStorage.setItem("username", result.data.userID);
+      setCookies("token", response.data.token, { path: "/" });
+      localStorage.setItem("username", response.data.username);
       setIsLoggedIn(true);
       navigate("/");
     } catch (error) {
-      alert("Invalid credentials");
+      alert("Invalid credentials. Please try again.");
     }
   };
 
@@ -41,7 +41,7 @@ const Login = ({ setIsLoggedIn }) => {
     <div className="auth-container">
       <form onSubmit={handleSubmit}>
         <h2>Login</h2>
-        <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button type="submit">Login</button>
       </form>
@@ -50,19 +50,22 @@ const Login = ({ setIsLoggedIn }) => {
 };
 
 const Register = () => {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.post("https://recipebook-nlcw.onrender.com/auth/register", {
+      await axios.post("https://recipebook-nlcw.onrender.com/register", {
+        email,
         username,
         password,
       });
       alert("Registration Completed! Now login.");
     } catch (error) {
       console.error(error);
+      alert("Error registering user.");
     }
   };
 
@@ -70,6 +73,7 @@ const Register = () => {
     <div className="auth-container">
       <form onSubmit={handleSubmit}>
         <h2>Register</h2>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} />
         <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
         <button type="submit">Register</button>
