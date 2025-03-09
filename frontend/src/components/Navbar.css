@@ -1,77 +1,81 @@
-/* General Navbar Styling */
-.custom-navbar {
-  background-color: #2c3e50; /* Dark blue navbar */
-  padding: 15px;
+.navbar {
+  display: flex;
+  flex-direction: row; /* Horizontal alignment */
+  align-items: center;
+  justify-content: space-between; /* Space items evenly */
+  background-color: #333;
+  padding: 15px 20px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensures it stays above other content */
 }
 
-.navbar-brand {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #f1c40f !important; /* Gold color */
-  transition: color 0.3s ease-in-out;
-}
-
-.navbar-brand:hover {
-  color: #e67e22 !important; /* Orange */
+.navbar h1 {
+  color: white;
+  margin-bottom: 20px; /* Title Space */
+  font-size: 28px;
+  color: orange;
 }
 
 /* Navbar Links */
-.navbar-nav .nav-item {
-  margin-right: 15px;
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px; /* Spacing between links */
+  margin: 0;
+  padding: 0;
 }
 
-.navbar-nav .nav-link {
-  font-size: 1.1rem;
-  color: #ecf0f1 !important; /* Light Gray */
-  transition: color 0.3s ease-in-out;
+
+/* Navbar Links Styling */
+.navbar ul li {
+  display: inline-block;
 }
 
-.navbar-nav .nav-link:hover {
-  color: #f1c40f !important; /* Gold */
-}
-
-/* Login & Register Links */
-.link-light {
-  font-weight: bold;
-  border-radius: 5px;
+.navbar ul li a {
   text-decoration: none;
-  transition: background 0.3s ease-in-out;
-  margin-left: 10px;
+  color: white;
+  font-size: 18px;
+  padding: 10px 15px;
+  border-radius: 5px;
 }
 
-.bg-success:hover {
-  background-color: #27ae60 !important; /* Darker Green */
+.navbar a {
+  color: white;
+  text-decoration: none; /* Remove underline */
+  font-size: 20px;
+  transition: 0.3s ease-in-out;
+  padding: 10px 0; 
 }
 
-.bg-info:hover {
-  background-color: #2980b9 !important; /* Darker Blue */
+
+.navbar a:hover {
+  color: orange; /* Hover Color */
+  text-decoration: underline; /* Line Hover Effect */
+  text-underline-offset: 6px; /* Distance of underline from text */
+  font-weight: bold; /* Optional Bold Hover */
 }
 
-/* Navbar Toggler (for Mobile) */
-.navbar-toggler {
+.navbar .auth-buttons {
+  margin-top: auto; /* Pushes buttons to the bottom */
+  width: 100%;
+  text-align: center;
+}
+
+.auth-buttons button {
+  width: 100%;
+  padding: 10px;
   border: none;
-  background-color: #f1c40f;
-  padding: 8px;
+  cursor: pointer;
+  background-color: transparent;
+  color: white;
+  transition:0.3s;
 }
 
-.navbar-toggler-icon {
-  background-color: white;
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-  .navbar-nav {
-    text-align: center;
-    margin-top: 10px;
-  }
-
-  .navbar-nav .nav-item {
-    margin-bottom: 10px;
-  }
-
-  .link-light {
-    display: block;
-    text-align: center;
-    margin-top: 5px;
-  }
+.auth-buttons button:hover {
+  color: orange; /* Hover Color */
+  text-decoration: underline; /* Line Hover Effect */
+  text-underline-offset: 4px;
 }
