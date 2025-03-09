@@ -1,37 +1,37 @@
-import React from 'react';
-import "./Navbar.css";
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import "./Navbar.css"; 
 
-const Navbar = () => {
+
+const Navbar = ({ isLoggedIn, setIsLoggedIn }) => {
+  const [cookies, setCookies, removeCookies] = useCookies(["access_token"]);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    removeCookies("access_token");
+    localStorage.removeItem("username");
+    setIsLoggedIn(false);
+    navigate("/");
+  };
+
   return (
-    <div>
-      <nav class="navbar navbar-expand-lg custom-navbar">
-  <div class="container-fluid">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#">PakkaSwad</a>
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/home">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/recipes">Recipes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/contact">Contact US</a>
-        </li>
-    
-      </ul>
-      <a class="link-light bg-success p-2" href="/login">Login </a>/<a class="link-light bg-info p-2" href="/register"> Register</a>
-    </div>
-  </div>
-</nav>
-    </div>
-  )
-}
+    <nav className="navbar">
+      <h1>PakkaSwad</h1>
+      <ul>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/about">About</Link></li>
+        <li><Link to="/create-recipe">Create Recipe</Link></li>
+        <li><Link to="/contact">Contact</Link></li>
 
-export default Navbar
+        {!isLoggedIn ? (
+          <li><Link to="/auth">Login / Register</Link></li>
+        ) : (
+          <li><button onClick={handleLogout}>Logout</button></li>
+        )}
+      </ul>
+    </nav>
+  );
+};
+
+export default Navbar;
