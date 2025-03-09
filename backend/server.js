@@ -6,8 +6,10 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
 const app = express();
+const router = express.Router();
+app.use("/", router);
 const PORT = process.env.PORT || 3000;
-const SECRET_KEY = "supersecretkey"; // Change this in production
+const SECRET_KEY = "supersecretkey";// Change this in production
 
 app.use(express.json());
 app.use(cors());
