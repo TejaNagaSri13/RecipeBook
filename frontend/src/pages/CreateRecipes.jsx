@@ -45,7 +45,7 @@ export const CreateRecipe = () => {
 
     try {
       await axios.post(
-        "https://recipebook1-20wl.onrender.com/create-recipe",
+        "https://recipebook-nlcw.onrender.com/create-recipe",
         { ...recipe },
         {
           headers: { authorization: cookies.access_token },
