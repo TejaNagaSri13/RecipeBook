@@ -56,13 +56,13 @@ app.post('/register', async (req, res) => {
 
 //login page
 app.post('/login', async (req, res) => {
-    console.log("Received Login Data: ", req.body);  // Debugging
+    console.log("Received Login Data: ", req.body);  // Check incoming data
 
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
 
-        console.log("Found User in DB: ", user);  // Debugging
+        console.log("Found User in DB: ", user);  // Check if user exists
 
         if (!user) {
             return res.status(400).json({ message: "User Not Found" });
@@ -70,13 +70,13 @@ app.post('/login', async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
 
-        console.log("Password Match:", isMatch);  // Debugging
+        console.log("Password Match:", isMatch);  // Check password comparison
 
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid Credentials" });
         }
 
-        const token = jwt.sign({ id: user._id, username: user.username }, SECRET_KEY, { expiresIn: "1h" });
+        const token = jwt.sign({ id: user._id, username: user.username }, "supersecretkey", { expiresIn: "1h" });
 
         res.json({ message: "Login Successful", token, username: user.username });
     } catch (err) {
