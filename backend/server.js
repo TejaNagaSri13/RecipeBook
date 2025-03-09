@@ -56,33 +56,28 @@ app.post('/register', async (req, res) => {
 
 //login page
 app.post('/login', async (req, res) => {
-    console.log("Received Login Data: ", req.body);  // Check incoming data
-
+    console.log("Received Login Data: ", req.body);
+    
     const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
+    const user = await User.findOne({ email });
 
-        console.log("Found User in DB: ", user);  // Check if user exists
-
-        if (!user) {
-            return res.status(400).json({ message: "User Not Found" });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        console.log("Password Match:", isMatch);  // Check password comparison
-
-        if (!isMatch) {
-            return res.status(400).json({ message: "Invalid Credentials" });
-        }
-
-        const token = jwt.sign({ id: user._id, username: user.username }, "supersecretkey", { expiresIn: "1h" });
-
-        res.json({ message: "Login Successful", token, username: user.username });
-    } catch (err) {
-        console.log("Login Error:", err);
-        res.status(500).json({ message: "Error logging in" });
+    if (!user) {
+        console.log("❌ User Not Found: ", email);
+        return res.status(400).json({ message: "Invalid Credentials" });
     }
+
+    console.log("✅ User Found: ", user);
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        console.log("❌ Password Mismatch!");
+        return res.status(400).json({ message: "Invalid Credentials" });
+    }
+
+    console.log("✅ Login Successful!");
+    const token = jwt.sign({ id: user._id, username: user.username }, "supersecretkey", { expiresIn: "1h" });
+
+    res.json({ message: "Login Successful", token, username: user.username });
 });
 
 // 📌 **Middleware: Verify JWT Token**
