@@ -1,141 +1,131 @@
-/* General Page Styling */
-body {
-    background-color: #f8f9fa;
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Header Image Styling */
-  .title-img img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    border-bottom: 4px solid #f39c12;
-  }
-  
-  /* About Section */
-  .home-about {
-    max-width: 800px;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .home-about h2 {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 20px;
-  }
-  
-  .home-about p {
-    text-align: left;
-    font-size: 1rem;
-    color: #555;
-    line-height: 1.8;
-  }
-  
-  /* List Icons */
-  .home-about p span {
-    color: #27ae60;
-    font-size: 1.2rem;
-    margin-right: 10px;
-  }
-  
-  /* Categories Section */
-  .home-nav-cat {
-    text-align: center;
-    margin-top: 40px;
-  }
-  
-  .home-nav-cat h2 {
-    font-size: 2rem;
-    color: #e67e22;
-    margin-bottom: 20px;
-  }
-  
-  /* Category Cards */
-  .flex {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .border {
-    width: 200px;
-    padding: 20px;
-    border-radius: 10px;
-    background: #ecf0f1;
-    transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
-    cursor: pointer;
-  }
-  
-  .border:hover {
-    background: #d5dbdb;
-    transform: scale(1.05);
-  }
-  
-  .border p {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #2c3e50;
-  }
-  
-  /* Contact Section */
-  .contact-det {
-    text-align: center;
-    background: #2c3e50;
-    color: white;
-    padding: 20px;
-    margin-top: 40px;
-  }
-  
-  .contact-det h3 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-  }
-  
-  .contact-det a {
-    display: block;
-    font-size: 1rem;
-    color: white;
-    text-decoration: none;
-    margin: 5px 0;
-  }
-  
-  .contact-det a:hover {
-    color: #f1c40f;
-    text-decoration: underline;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .home-about {
-      width: 90%;
-      padding: 15px;
-    }
-  
-    .title-img img {
-      height: 250px;
-    }
-  
-    .home-about h2,
-    .home-nav-cat h2 {
-      font-size: 1.8rem;
-    }
-  
-    .border {
-      width: 150px;
-      padding: 15px;
-    }
-  
-    .contact-det {
-      padding: 15px;
-    }
-  }
-  
+/* General Home Page Layout */
+.home-container {
+  width: 100vw; /* Full viewport width */
+  min-height: 100vh; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.home-container h1{
+  margin-bottom: 10px;
+  color: #ff6600;
+  font-family: 'Brush Script MT', cursive;
+}
+
+/* Header Styling */
+.header {
+  width: 100%;
+  background: #ff6600;
+  color: white;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.header h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #ff6600;
+}
+
+.header p {
+  font-size: 18px;
+}
+
+.title-img{
+  width: 100%;
+}
+
+/* Sections (About, Recipes, Contact) */
+.about-section,
+.recipes-section,
+.contact-section {
+  width: 80%;
+  max-width: 900px; /* Keeps it centered */
+  text-align: center;
+  background: #ffffff;
+  padding: 40px;
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Recipes Section */
+.recipes-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Recipe Card */
+.recipe-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  width: 280px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.recipe-card:hover {
+  transform: scale(1.05);
+}
+
+/* Recipe Image */
+.recipe-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Recipe Title */
+.recipe-card h2 {
+  font-size: 20px;
+  margin: 10px 0;
+  color: #333;
+}
+
+/* Instructions */
+.instructions {
+  font-size: 14px;
+  color: #666;
+  text-align: left;
+  margin: 10px 0;
+}
+
+/* Cooking Time */
+.recipe-card p {
+  font-size: 14px;
+  font-weight: bold;
+  color: #444;
+}
+
+/* Save Button */
+.recipe-card button {
+  background: #ff6600;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.recipe-card button:hover {
+  background: #e65c00;
+}
+
+.recipe-card button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Contact Section */
+.contact-section p {
+  font-size: 16px;
+  color: #555;
+}
