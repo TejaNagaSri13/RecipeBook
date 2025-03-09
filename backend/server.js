@@ -1,11 +1,9 @@
-const express = require('express');
-const mongoose = require('mongoose');
-require('dotenv').config();
-const User = require('./models/User');
-const Recipe = require('./models/Recipe');
-const bcrypt = require('bcryptjs');
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
