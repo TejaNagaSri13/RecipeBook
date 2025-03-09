@@ -27,15 +27,15 @@ app.get('/', (req, res) => {
 //register page
 router.post("/register", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, username, password } = req.body; // ✅ Include email
 
-    const user = await UserModel.findOne({ username });
-    if (user) {
-      return res.status(400).json({ message: "Username already exists" });
+    const userExists = await UserModel.findOne({ email }); // ✅ Check by email
+    if (userExists) {
+      return res.status(400).json({ message: "Email already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new UserModel({ username, password: hashedPassword });
+    const newUser = new UserModel({ email, username, password: hashedPassword }); // ✅ Save email
     await newUser.save();
 
     res.json({ message: "User registered successfully" });
@@ -44,24 +44,31 @@ router.post("/register", async (req, res) => {
   }
 });
 
+
 //login page
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body; // ✅ Use email instead of username
+    const user = await UserModel.findOne({ email }); // ✅ Search by email
 
-    const user = await UserModel.findOne({ username });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({ message: "Username or password is incorrect" });
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid password" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
     res.json({ token, userID: user._id });
+
   } catch (error) {
-    res.status(500).json({ message: "Error logging in" });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
 
 // 📌 **Middleware: Verify JWT Token**
 export const verifyToken = (req, res, next) => {
