@@ -25,73 +25,60 @@ app.get('/', (req, res) => {
 });
 
 //register page
-app.post('/register', async (req, res) => {
-    console.log("Received Registration Data: ", req.body);
+router.post("/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-        return res.status(400).json({ message: "All fields are required" });
+    const user = await UserModel.findOne({ username });
+    if (user) {
+      return res.status(400).json({ message: "Username already exists" });
     }
 
-    try {
-        const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "User already exists" });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new UserModel({ username, password: hashedPassword });
+    await newUser.save();
 
-        // 🔥 Fix: Ensure password is properly hashed
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const user = new User({ username, email, password: hashedPassword });
-        await user.save();
-
-        console.log("User registered:", user);
-
-        res.status(201).json({ message: "User Registered Successfully" });
-    } catch (err) {
-        console.log("Registration Error:", err);
-        res.status(500).json({ message: "Error registering user" });
-    }
+    res.json({ message: "User registered successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error registering user" });
+  }
 });
 
 //login page
-app.post('/login', async (req, res) => {
-    console.log("Received Login Data: ", req.body);
-    
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-    if (!user) {
-        console.log("❌ User Not Found: ", email);
-        return res.status(400).json({ message: "Invalid Credentials" });
+    const user = await UserModel.findOne({ username });
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(400).json({ message: "Username or password is incorrect" });
     }
 
-    console.log("✅ User Found: ", user);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        console.log("❌ Password Mismatch!");
-        return res.status(400).json({ message: "Invalid Credentials" });
-    }
-
-    console.log("✅ Login Successful!");
-    const token = jwt.sign({ id: user._id, username: user.username }, "supersecretkey", { expiresIn: "1h" });
-
-    res.json({ message: "Login Successful", token, username: user.username });
+    res.json({ token, userID: user._id });
+  } catch (error) {
+    res.status(500).json({ message: "Error logging in" });
+  }
 });
 
 // 📌 **Middleware: Verify JWT Token**
-const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "Access Denied" });
+export const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-    try {
-        const verified = jwt.verify(token, SECRET_KEY);
-        req.user = verified;
-        next();
-    } catch (err) {
-        res.status(400).json({ message: "Invalid Token" });
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ message: "Invalid Token" });
     }
+    req.user = decoded;
+    next();
+  });
 };
 
 // 📌 **Add Recipe API (Protected)**
