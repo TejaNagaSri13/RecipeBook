@@ -13,7 +13,7 @@ const Home = () => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get("https://recipebook1-20wl.onrender.com/recipes");
+        const response = await axios.get("https://recipebook-nlcw.onrender.com/recipes");
         setRecipes(response.data);
       } catch (err) {
         console.log(err);
@@ -23,7 +23,7 @@ const Home = () => {
     const fetchSavedRecipes = async () => {
       try {
         const response = await axios.get(
-          `https://recipebook1-20wl.onrender.com/recipes/savedRecipes/ids/${userID}`
+          `https://recipebook-nlcw.onrender.com/recipes/savedRecipes/ids/${userID}`
         );
         setSavedRecipes(response.data.savedRecipes);
       } catch (err) {
@@ -37,7 +37,7 @@ const Home = () => {
 
   const saveRecipe = async (recipeID) => {
     try {
-      const response = await axios.put("https://recipebook1-20wl.onrender.com/recipes", {
+      const response = await axios.put("https://recipebook-nlcw.onrender.com/recipes", {
         recipeID,
         userID,
       });
